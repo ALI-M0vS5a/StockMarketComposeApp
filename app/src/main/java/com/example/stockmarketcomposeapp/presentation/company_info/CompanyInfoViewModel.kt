@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.stockmarketcomposeapp.domain.repository.StockRepository
 import com.example.stockmarketcomposeapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,44 +23,72 @@ class CompanyInfoViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val symbol = savedStateHandle.get<String>("symbol") ?: return@launch
-            state = state.copy(isLoading = true)
-            val companyInfoResult = async { repository.getCompanyInfo(symbol) }
-            val intradayInfoResult = async { repository.getIntraDayInfo(symbol) }
-            when(val result = companyInfoResult.await()) {
-                is Resource.Success -> {
-                    state = state.copy(
-                        company = result.data,
-                        isLoading = false,
-                        error = null
-                    )
-                }
-                is Resource.Error -> {
-                    state = state.copy(
-                        isLoading = false,
-                        error = result.message,
-                        company = null
-                    )
-                }
-                is Resource.Loading -> Unit
-            }
-            when(val result = intradayInfoResult.await()) {
-                is Resource.Success -> {
-                    state = state.copy(
-                        stockInfos = result.data ?: emptyList(),
-                        isLoading = false,
-                        error = null
-                    )
-                }
-                is Resource.Error -> {
-                    state = state.copy(
-                        isLoading = false,
-                        error = result.message,
-                        stockInfos = emptyList()
-                    )
-                }
-                is Resource.Loading -> Unit
+            savedStateHandle.get<String>("symbol")?.let { symbol ->
+                getCompanyInfos(symbol)
+                getIntradayInfos(symbol)
             }
         }
     }
+
+    private fun getCompanyInfos(
+        symbol: String,
+        fetchFromRemote: Boolean = false
+    ) {
+        viewModelScope.launch {
+            repository
+                .getCompanyInfo(fetchFromRemote, symbol)
+                .collect { result ->
+                    when (result) {
+                        is Resource.Loading -> {
+                            state = state.copy(isLoading = result.isLoading)
+                        }
+                        is Resource.Error -> {
+                            state = state.copy(
+                                isLoading = false,
+                                error = result.message
+                            )
+                        }
+                        is Resource.Success -> {
+                            result.data?.let { infos ->
+                                state = state.copy(
+                                    company = infos
+                                )
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    suspend fun getIntradayInfos(
+        symbol: String,
+        fetchFromRemote: Boolean = false
+    ) {
+        viewModelScope.launch {
+            repository
+                .getIntraDayInfo(fetchFromRemote, symbol)
+                .collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            result.data?.let { IntraInfos ->
+                                state = state.copy(
+                                    stockInfos = IntraInfos
+                                )
+                            }
+                        }
+                        is Resource.Loading -> {
+                            state = state.copy(isLoading = result.isLoading)
+                        }
+
+                        is Resource.Error -> {
+                            state = state.copy(
+                                isLoading = false,
+                                error = result.message
+                            )
+                        }
+                    }
+                }
+        }
+    }
+
 }

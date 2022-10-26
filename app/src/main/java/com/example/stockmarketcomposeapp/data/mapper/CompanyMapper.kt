@@ -1,5 +1,6 @@
 package com.example.stockmarketcomposeapp.data.mapper
 
+import com.example.stockmarketcomposeapp.data.local.CompanyInfoEntity
 import com.example.stockmarketcomposeapp.data.local.CompanyListingEntity
 import com.example.stockmarketcomposeapp.data.remote.dto.CompanyInfoDto
 import com.example.stockmarketcomposeapp.domain.model.CompanyInfo
@@ -28,5 +29,35 @@ fun CompanyInfoDto.toCompanyInfo(): CompanyInfo {
         name = name ?: "",
         country = country ?: "",
         industry = industry ?: ""
+    )
+}
+
+fun CompanyInfoEntity.toCompanyInfo(): CompanyInfo {
+    return CompanyInfo(
+        symbol = symbol,
+        description = description,
+        name = name,
+        country = country,
+        industry = industry
+    )
+}
+
+fun CompanyInfoDto.toCompanyInfoEntity(): CompanyInfoEntity {
+    return CompanyInfoEntity(
+        symbol = symbol ?: "",
+        description = description ?: "",
+        name = name ?: "",
+        country = country ?: "",
+        industry = industry ?: ""
+    )
+}
+
+fun CompanyInfo.toCompanyInfoEntity(): CompanyInfoEntity {
+    return CompanyInfoEntity(
+        symbol = symbol,
+        description = description,
+        name = name,
+        country = country,
+        industry = industry
     )
 }

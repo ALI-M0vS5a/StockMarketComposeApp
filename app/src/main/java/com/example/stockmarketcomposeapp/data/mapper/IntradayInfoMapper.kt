@@ -2,6 +2,7 @@ package com.example.stockmarketcomposeapp.data.mapper
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.stockmarketcomposeapp.data.local.IntradayInfoEntity
 import com.example.stockmarketcomposeapp.data.remote.dto.IntradayInfoDto
 import com.example.stockmarketcomposeapp.domain.model.IntradayInfo
 import java.time.LocalDateTime
@@ -16,6 +17,20 @@ fun IntradayInfoDto.toIntradayInfo(): IntradayInfo {
     val localDateTime = LocalDateTime.parse(timestamp,formatter)
     return IntradayInfo(
         date = localDateTime,
+        close = close
+    )
+}
+
+fun IntradayInfoEntity.toIntradayInfo(): IntradayInfo {
+    return IntradayInfo(
+        date = date,
+        close = close
+    )
+}
+
+fun IntradayInfo.toIntradayInfosEntity(): IntradayInfoEntity {
+    return IntradayInfoEntity(
+        date = date,
         close = close
     )
 }

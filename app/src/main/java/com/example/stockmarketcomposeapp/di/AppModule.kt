@@ -36,6 +36,9 @@ object AppModule {
             app,
             StockDatabase::class.java,
             "stockdb.db"
-        ).build()
+        )
+            .allowMainThreadQueries()
+            .fallbackToDestructiveMigration()
+            .build()
     }
 }

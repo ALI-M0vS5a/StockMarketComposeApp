@@ -39,6 +39,7 @@ fun CompanyInfoScreen(
                 .padding(16.dp)
         ) {
             state.company?.let { company ->
+                println("Company 111: ${company.symbol}")
                 Text(
                     text = company.name,
                     fontWeight = FontWeight.Bold,
@@ -81,6 +82,7 @@ fun CompanyInfoScreen(
                     fontSize = 14.sp,
                     modifier = Modifier.fillMaxWidth()
                 )
+            }
                 if(state.stockInfos.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(text = "Market Summary")
@@ -93,7 +95,6 @@ fun CompanyInfoScreen(
                             .align(CenterHorizontally)
                     )
                 }
-            }
         }
     }
     Box(

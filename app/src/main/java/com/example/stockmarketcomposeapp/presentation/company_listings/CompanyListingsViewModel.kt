@@ -30,7 +30,9 @@ class CompanyListingsViewModel @Inject constructor(
     fun onEvent(event: CompanyListingsEvent) {
         when (event) {
             is CompanyListingsEvent.Refresh -> {
-                getCompanyListings(fetchFromRemote = true)
+                viewModelScope.launch {
+                    getCompanyListings(fetchFromRemote = true)
+                }
             }
             is CompanyListingsEvent.OnSearchQueryChange -> {
                 state = state.copy(
@@ -41,14 +43,13 @@ class CompanyListingsViewModel @Inject constructor(
                     delay(500L)
                     getCompanyListings()
                 }
-
             }
         }
     }
 
 
     private fun getCompanyListings(
-        query: String = state.searchQuery,
+        query: String = state.searchQuery.lowercase(),
         fetchFromRemote: Boolean = false
     ) {
         viewModelScope.launch {
@@ -62,9 +63,7 @@ class CompanyListingsViewModel @Inject constructor(
                         is Resource.Error -> Unit
                         is Resource.Success -> {
                             result.data?.let { listings ->
-                                state = state.copy(
-                                    companies = listings
-                                )
+                                state = state.copy(companies = listings)
                             }
                         }
                     }
