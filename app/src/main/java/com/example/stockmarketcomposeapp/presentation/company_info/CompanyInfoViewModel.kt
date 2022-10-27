@@ -10,6 +10,7 @@ import com.example.stockmarketcomposeapp.domain.repository.StockRepository
 import com.example.stockmarketcomposeapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 
@@ -26,6 +27,7 @@ class CompanyInfoViewModel @Inject constructor(
             savedStateHandle.get<String>("symbol")?.let { symbol ->
                 getCompanyInfos(symbol)
                 getIntradayInfos(symbol)
+                refreshEvery30SecondsIfTheUserIsInCompanyInfoScreen(symbol)
             }
         }
     }
@@ -91,4 +93,19 @@ class CompanyInfoViewModel @Inject constructor(
         }
     }
 
+    private fun refreshEvery30SecondsIfTheUserIsInCompanyInfoScreen(symbol: String) {
+        val t = Timer()
+        t.scheduleAtFixedRate(
+            object : TimerTask() {
+                override fun run() {
+                    viewModelScope.launch {
+                        getCompanyInfos(symbol)
+                        getIntradayInfos(symbol)
+                    }
+                }
+            },
+            30000,
+            30000
+        )
+    }
 }
