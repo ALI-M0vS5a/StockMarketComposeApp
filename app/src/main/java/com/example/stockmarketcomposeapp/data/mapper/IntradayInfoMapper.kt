@@ -28,9 +28,10 @@ fun IntradayInfoEntity.toIntradayInfo(): IntradayInfo {
     )
 }
 
-fun IntradayInfo.toIntradayInfosEntity(): IntradayInfoEntity {
+fun IntradayInfo.toIntradayInfosEntity(symbol: String): IntradayInfoEntity {
     return IntradayInfoEntity(
         date = date,
-        close = close
+        close = close,
+        symbol = symbol
     )
 }

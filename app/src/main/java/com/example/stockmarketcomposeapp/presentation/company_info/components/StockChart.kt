@@ -1,7 +1,6 @@
 package com.example.stockmarketcomposeapp.presentation.company_info.components
 
 import android.graphics.Paint
-import android.graphics.Paint.Align
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas

@@ -46,10 +46,10 @@ interface StockDao {
     suspend fun insertIntradayInfo(
         intradayInfoEntities: List<IntradayInfoEntity>
     )
-    @Query("SELECT * FROM intradayinfoentity")
-    suspend fun getIntradayInfo(): List<IntradayInfoEntity>
+    @Query("SELECT * FROM intradayinfoentity WHERE :symbol == symbol")
+    suspend fun getIntradayInfo(symbol: String): List<IntradayInfoEntity>
 
-    @Query("DELETE FROM intradayinfoentity")
-    suspend fun clearIntradayInfos()
+    @Query("DELETE FROM IntradayInfoEntity WHERE :symbol == symbol")
+    suspend fun clearIntradayInfos(symbol: String)
 
 }

@@ -11,6 +11,7 @@ import com.example.stockmarketcomposeapp.domain.model.IntradayInfo
 import com.example.stockmarketcomposeapp.domain.repository.StockRepository
 import com.example.stockmarketcomposeapp.util.Resource
 import com.example.stockmarketcomposeapp.util.UiText
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -18,6 +19,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 
+@DelicateCoroutinesApi
 class StockRepositoryImpl @Inject constructor(
     private val api: StockApi,
     db: StockDatabase,
@@ -86,7 +88,7 @@ class StockRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<IntradayInfo>>> {
         return flow {
             emit(Resource.Loading(true))
-            val localIntraInfos = dao.getIntradayInfo()
+            val localIntraInfos = dao.getIntradayInfo(symbol)
             emit(
                 Resource.Success(
                     data = localIntraInfos.map { it.toIntradayInfo() }
@@ -121,13 +123,13 @@ class StockRepositoryImpl @Inject constructor(
                 null
             }
             remoteIntraInfo?.let { IntraInfos ->
-                dao.clearIntradayInfos()
+                dao.clearIntradayInfos(symbol)
                 dao.insertIntradayInfo(
-                    IntraInfos.map { it.toIntradayInfosEntity() }
+                    IntraInfos.map { it.toIntradayInfosEntity(symbol) }
                 )
                 emit(
                     Resource.Success(
-                        data = dao.getIntradayInfo().map { it.toIntradayInfo() }
+                        data = dao.getIntradayInfo(symbol).map { it.toIntradayInfo() }
                     )
                 )
                 emit(Resource.Loading(false))

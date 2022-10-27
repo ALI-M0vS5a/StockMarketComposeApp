@@ -12,7 +12,7 @@ import com.example.stockmarketcomposeapp.data.converter.LocalDateTimeConverter
         CompanyInfoEntity::class,
         IntradayInfoEntity::class
     ],
-    version = 5,
+    version = 12,
     exportSchema = false
 )
 abstract class StockDatabase : RoomDatabase() {
